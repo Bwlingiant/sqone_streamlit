@@ -4,17 +4,15 @@ import psycopg
 import pandas as pd
 import altair as alt
 
-# Use st.secrets or os.environ for security in production
-db_name = st.secrets["DB_NAME"]
-db_user = st.secrets["DB_USER"]
-db_password = st.secrets["DB_PASS"]
-db_host = st.secrets["DB_HOST"]
-db_port = st.secrets["DB_PORT"]
-conn_info = f"dbname={db_name} user={db_user} password={db_password} host={db_host} port={db_port}"
-
 @st.cache_resource
 def get_connection():
-    return psycopg.connect(conn_info)
+    return psycopg.connect(
+    host=st.secrets["postgres"]["host"],
+    dbname=st.secrets["postgres"]["dbname"],
+    user=st.secrets["postgres"]["user"],
+    password=st.secrets["postgres"]["password"],
+    port=st.secrets["postgres"]["port"]
+)
 
 conn = get_connection()
 
