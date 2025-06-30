@@ -16,14 +16,14 @@ def get_connection():
 
 conn = get_connection()
 
-# query = '''SELECT * FROM "sqone".startgg_sets LIMIT 5;'''
+# query = '''SELECT * FROM "fgc".startgg_sets LIMIT 5;'''
 # df = pd.read_sql_query(query, conn)
 # Run query
 # with conn.cursor() as cur:
-#     cur.execute('''SELECT * FROM "sqone".startgg_sets LIMIT 5;''')
+#     cur.execute('''SELECT * FROM "fgc".startgg_sets LIMIT 5;''')
 #     rows = cur.fetchall()
 
-standing_query = '''SELECT * FROM "sqone".startgg_tournament_standings;'''
+standing_query = '''SELECT * FROM "fgc".startgg_tournament_standings;'''
 sets_query = '''WITH matchups AS (
   SELECT
     game_id,
@@ -32,7 +32,7 @@ sets_query = '''WITH matchups AS (
     player2_id AS opponent_id,
     CASE WHEN entrant1_id = winner_id THEN 1 ELSE 0 END AS win,
     CASE WHEN entrant2_id = winner_id THEN 1 ELSE 0 END AS loss
-  FROM sqone.startgg_sets
+  FROM fgc.startgg_sets
 
   UNION ALL
 
@@ -43,7 +43,7 @@ sets_query = '''WITH matchups AS (
     player1_id AS opponent_id,
     CASE WHEN entrant2_id = winner_id THEN 1 ELSE 0 END AS win,
     CASE WHEN entrant1_id = winner_id THEN 1 ELSE 0 END AS loss
-  FROM sqone.startgg_sets
+  FROM fgc.startgg_sets
 )
 
 SELECT
@@ -56,11 +56,11 @@ opp1.player_name opponent_name,
   SUM(win) AS wins,
   SUM(loss) AS losses
 FROM matchups m1
-LEFT JOIN "sqone".startgg_players pl1
+LEFT JOIN "fgc".startgg_players pl1
 ON m1.player_id = pl1.player_id
-LEFT JOIN "sqone".startgg_players opp1
+LEFT JOIN "fgc".startgg_players opp1
 on m1.opponent_id = opp1.player_id
-LEFT JOIN "sqone".game_lov game1
+LEFT JOIN "fgc".game_lov game1
 ON m1.game_id = game1.game_id
 GROUP BY m1.game_id, game1.game_name, m1.player_id, opponent_id, pl1.player_name, opp1.player_name
 ORDER BY m1.game_id, m1.player_id, opponent_id
