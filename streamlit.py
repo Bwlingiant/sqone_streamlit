@@ -95,7 +95,9 @@ pie_df = sets_filtered.melt(value_vars=['wins', 'losses'],
                  var_name='result', 
                  value_name='count')
 
-chart = alt.Chart(pie_df).mark_arc().encode(
+pie_df_summed = pie_df.groupby(['result']).sum()
+
+chart = alt.Chart(pie_df_summed).mark_arc().encode(
     theta="count",
     color="result"
 )
