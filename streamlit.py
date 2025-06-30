@@ -70,11 +70,9 @@ sets_df = pd.read_sql_query(sets_query, conn)
 
 col1, col2 = st.columns(2)
 
-
 st.logo("sqone-logo.png", size="Large")
 # st.write("Query Results", df)
-with col1:
-    
+with st.container():
   player_filter = st.selectbox("Player 1 Filter", sets_df['player_name'].unique(), index=None)
   players_filtered = sets_df.loc[sets_df["player_name"]==player_filter]
 
@@ -103,8 +101,7 @@ chart = alt.Chart(pie_df).mark_arc().encode(
     theta="count",
     color="result"
 )
-
- 
-with col2:
+with col1:
     st.write("Standings Results", sets_filtered[["player_name", "opponent_name", "wins", "losses", "game_name"]])
+with col2:
     st.altair_chart(chart)
