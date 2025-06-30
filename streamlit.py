@@ -103,6 +103,7 @@ chart = alt.Chart(pie_df).mark_arc().encode(
 col1, col2 = st.columns(2)
 
 with col1:
-    st.write("Standings Results", sets_filtered[["opponent_name", "wins", "losses", "game_name"]])
+    st.write("Standings Results")
+    st.dataframe(sets_filtered[["opponent_name", "wins", "losses", "game_name"]], hide_index=True)
 with col2:
     st.altair_chart(chart)
