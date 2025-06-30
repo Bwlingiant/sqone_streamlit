@@ -68,8 +68,6 @@ ORDER BY m1.game_id, m1.player_id, opponent_id
 '''
 sets_df = pd.read_sql_query(sets_query, conn)
 
-col1, col2 = st.columns(2)
-
 st.logo("sqone-logo.png", size="Large")
 # st.write("Query Results", df)
 with st.container():
@@ -101,6 +99,9 @@ chart = alt.Chart(pie_df).mark_arc().encode(
     theta="count",
     color="result"
 )
+
+col1, col2 = st.columns(2)
+
 with col1:
     st.write("Standings Results", sets_filtered[["player_name", "opponent_name", "wins", "losses", "game_name"]])
 with col2:
