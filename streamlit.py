@@ -68,31 +68,32 @@ ORDER BY m1.game_id, m1.player_id, opponent_id
 '''
 sets_df = pd.read_sql_query(sets_query, conn)
 
-
+col1, col2 = st.columns(2)
 
 
 st.logo("sqone-logo.png", size="Large")
 # st.write("Query Results", df)
+with col1:
+    
+  player_filter = st.selectbox("Player 1 Filter", sets_df['player_name'].unique(), index=None)
+  players_filtered = sets_df.loc[sets_df["player_name"]==player_filter]
 
-player_filter = st.selectbox("Player 1 Filter", sets_df['player_name'].unique(), index=None)
-players_filtered = sets_df.loc[sets_df["player_name"]==player_filter]
 
+  opponent_filter = st.selectbox("Opponent Filter", players_filtered['opponent_name'].unique(), index=None)
 
-opponent_filter = st.selectbox("Opponent Filter", players_filtered['opponent_name'].unique(), index=None)
+  if opponent_filter is None:
+      opponents_filtered = players_filtered
+  else:
+      opponents_filtered = players_filtered.loc[players_filtered["opponent_name"]==opponent_filter]
 
-if opponent_filter is None:
-    opponents_filtered = players_filtered
-else:
-    opponents_filtered = players_filtered.loc[players_filtered["opponent_name"]==opponent_filter]
+  game_filter = st.selectbox("Game Filter", opponents_filtered["game_name"].unique(), index=None)
 
-game_filter = st.selectbox("Game Filter", opponents_filtered["game_name"].unique(), index=None)
+  if game_filter is None:
+      sets_filtered = opponents_filtered
+  else:
+      sets_filtered = opponents_filtered.loc[opponents_filtered["game_name"]==game_filter]
 
-if game_filter is None:
-    sets_filtered = opponents_filtered
-else:
-    sets_filtered = opponents_filtered.loc[opponents_filtered["game_name"]==game_filter]
-
-st.write("Standings Results", sets_filtered[["player_name", "opponent_name", "wins", "losses", "game_name"]])
+# st.write("Standings Results", sets_filtered[["player_name", "opponent_name", "wins", "losses", "game_name"]])
 
 pie_df = sets_filtered.melt(value_vars=['wins', 'losses'], 
                  var_name='result', 
@@ -102,4 +103,8 @@ chart = alt.Chart(pie_df).mark_arc().encode(
     theta="count",
     color="result"
 )
-st.altair_chart(chart)
+
+ 
+with col2:
+    st.write("Standings Results", sets_filtered[["player_name", "opponent_name", "wins", "losses", "game_name"]])
+    st.altair_chart(chart)
