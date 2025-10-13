@@ -70,19 +70,24 @@ sets_df = pd.read_sql_query(sets_query, conn)
 
 st.logo("sqone-logo.png", size="Large")
 # st.write("Query Results", df)
+
+
 with st.container():
-  player_filter = st.selectbox("Player 1 Filter", sets_df['player_name'].unique(), index=None)
-  players_filtered = sets_df.loc[sets_df["player_name"]==player_filter]
+  p1col, p2col, gamecol = st.columns(3)
+  with p1col:
+    player_filter = st.selectbox("Player 1 Filter", sets_df['player_name'].unique(), index=None)
+    players_filtered = sets_df.loc[sets_df["player_name"]==player_filter]
 
-
-  opponent_filter = st.selectbox("Opponent Filter", players_filtered['opponent_name'].unique(), index=None)
+  with p2col:
+    opponent_filter = st.selectbox("Opponent Filter", players_filtered['opponent_name'].unique(), index=None)
 
   if opponent_filter is None:
       opponents_filtered = players_filtered
   else:
       opponents_filtered = players_filtered.loc[players_filtered["opponent_name"]==opponent_filter]
 
-  game_filter = st.selectbox("Game Filter", opponents_filtered["game_name"].unique(), index=None)
+  with gamecol:
+    game_filter = st.selectbox("Game Filter", opponents_filtered["game_name"].unique(), index=None)
 
   if game_filter is None:
       sets_filtered = opponents_filtered
