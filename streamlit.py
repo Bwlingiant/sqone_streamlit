@@ -77,7 +77,7 @@ import pandas as pd
 
 # sets_df columns assumed: ["game_name", "player_name", "opponent_name", ...]
 with st.container():
-    p1col, p2col, gamecol = st.columns(3)
+    gamecol,p1col, p2col = st.columns(3)
 
     # --- GAME can be chosen anytime (or left as All) ---
     with gamecol:
