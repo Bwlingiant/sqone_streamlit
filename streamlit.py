@@ -72,37 +72,65 @@ st.logo("sqone-logo.png", size="Large")
 # st.write("Query Results", df)
 
 
-import streamlit as st
-import pandas as pd
+# --- init keys ---
+for k in ("game_filter", "player_filter", "opponent_filter"):
+    st.session_state.setdefault(k, None)
 
-# sets_df columns assumed: ["game_name", "player_name", "opponent_name", ...]
 with st.container():
-    gamecol,p1col, p2col = st.columns(3)
+    p1col, p2col, gamecol = st.columns(3)
 
-    # --- GAME can be chosen anytime (or left as All) ---
+    # --- GAME ---
     with gamecol:
-        game_options = sorted(sets_df["game_name"].dropna().unique().tolist())
-        game_filter = st.selectbox("Game Filter", ["All"] + game_options, index=0)
+        game_options = ["All"] + sorted(sets_df["game_name"].dropna().unique().tolist())
+        # Ensure game selection is valid
+        if st.session_state.game_filter not in game_options:
+            st.session_state.game_filter = "All"
+        game_filter = st.selectbox("Game Filter", game_options, key="game_filter")
 
-    # Narrow the working frame by game (if picked)
+    # Working frame for downstream options
     df_by_game = sets_df if game_filter == "All" else sets_df[sets_df["game_name"] == game_filter]
 
-    # --- PLAYER 1 can also be chosen anytime ---
+    # --- PLAYER 1 (depends on game, but we preserve if still valid) ---
     with p1col:
         p1_options = sorted(df_by_game["player_name"].dropna().unique().tolist())
-        player_filter = st.selectbox("Player 1 Filter", p1_options, index=None, placeholder="Pick Player 1")
 
-    # --- PLAYER 2 only appears AFTER Player 1 is selected ---
+        # If current P1 no longer valid for this game, clear P1 and P2
+        if st.session_state.player_filter not in p1_options:
+            st.session_state.player_filter = None
+            st.session_state.opponent_filter = None
+
+        player_filter = st.selectbox(
+            "Player 1 Filter",
+            p1_options,
+            key="player_filter",
+            index=(p1_options.index(st.session_state.player_filter) 
+                   if st.session_state.player_filter in p1_options else None),
+            placeholder="Pick Player 1",
+        )
+
+    # --- PLAYER 2 (only after P1) ---
     with p2col:
-        if player_filter is not None and player_filter != "":
+        if player_filter:
             df_by_p1 = df_by_game[df_by_game["player_name"] == player_filter]
             p2_options = sorted(df_by_p1["opponent_name"].dropna().unique().tolist())
-            opponent_filter = st.selectbox("Opponent Filter", p2_options, index=None, placeholder="Pick Opponent")
+
+            # If current P2 invalid for new (game, p1), clear it
+            if st.session_state.opponent_filter not in p2_options:
+                st.session_state.opponent_filter = None
+
+            opponent_filter = st.selectbox(
+                "Opponent Filter",
+                p2_options,
+                key="opponent_filter",
+                index=(p2_options.index(st.session_state.opponent_filter) 
+                       if st.session_state.opponent_filter in p2_options else None),
+                placeholder="Pick Opponent",
+            )
         else:
             st.info("Select Player 1 to enable Opponent filter.")
             opponent_filter = None
 
-    # --- Build final filtered dataframe ---
+    # --- Final filter ---
     filtered = sets_df.copy()
     if game_filter != "All":
         filtered = filtered[filtered["game_name"] == game_filter]
