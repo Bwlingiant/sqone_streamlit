@@ -77,7 +77,7 @@ for k in ("game_filter", "player_filter", "opponent_filter"):
     st.session_state.setdefault(k, None)
 
 with st.container():
-    p1col, p2col, gamecol = st.columns(3)
+    gamecol, p1col, p2col = st.columns(3)
 
     # --- GAME ---
     with gamecol:
