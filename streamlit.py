@@ -69,8 +69,13 @@ ORDER BY m1.game_id, m1.player_id, opponent_id
 sets_df = pd.read_sql_query(sets_query, conn)
 
 st.logo("sqone-logo.png", size="Large")
-# st.write("Query Results", df)
 
+with st.container():
+    logo_col, title_col = st.columns([1, 4])
+    with logo_col:
+        st.image("sqone-logo.png", use_container_width=True)
+    with title_col:
+        st.title("Square One Stats")
 
 # --- init keys ---
 for k in ("game_filter", "player_filter", "opponent_filter"):
