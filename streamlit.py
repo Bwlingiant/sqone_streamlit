@@ -75,7 +75,7 @@ with st.container():
     with logo_col:
         st.image("sqone-logo.png", use_container_width=True)
     with title_col:
-        st.title("Square One Stats")
+        st.title("Square One E-Sports Stats")
 
 # --- init keys ---
 for k in ("game_filter", "player_filter", "opponent_filter"):
