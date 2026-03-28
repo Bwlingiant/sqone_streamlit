@@ -175,7 +175,7 @@ with st.container():
         st.caption("No matches with the current filters.")
 
 
-# st.write("Standings Results", sets_filtered[["player_name", "opponent_name", "wins", "losses", "game_name"]])
+# st.write("Game Results", sets_filtered[["player_name", "opponent_name", "wins", "losses", "game_name"]])
 
 pie_df = filtered.melt(value_vars=['wins', 'losses'], 
                  var_name='result', 
