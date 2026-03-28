@@ -69,15 +69,20 @@ ORDER BY m1.game_id, m1.player_id, opponent_id
 sets_df = pd.read_sql_query(sets_query, conn)
 
 st.logo("sqone-logo.png", size="Large")
-# st.write("Query Results", df)
 
+with st.container():
+    logo_col, title_col = st.columns([1, 4])
+    with logo_col:
+        st.image("sqone-logo.png", use_container_width=True)
+    with title_col:
+        st.title("Square One E-Sports Stats")
 
 # --- init keys ---
 for k in ("game_filter", "player_filter", "opponent_filter"):
     st.session_state.setdefault(k, None)
 
 with st.container():
-    gamecol, p1col, p2col = st.columns(3)
+    gamecol, p1col, p2col, resetcol = st.columns([2, 2, 2, 1])
 
     # --- GAME (options narrowed to games the selected player has played in) ---
     with gamecol:
@@ -113,6 +118,15 @@ with st.container():
             placeholder="Pick Player 1",
         )
 
+    # --- RESET ---
+    with resetcol:
+        st.write("")
+        st.write("")
+        if st.button("Reset", use_container_width=True):
+            for k in ("game_filter", "player_filter", "opponent_filter"):
+                st.session_state.pop(k, None)
+            st.rerun()
+
     # --- PLAYER 2 (only after P1) ---
     with p2col:
         if player_filter:
@@ -144,7 +158,17 @@ with st.container():
     if opponent_filter:
         filtered = filtered[filtered["opponent_name"] == opponent_filter]
 
-    st.dataframe(filtered, use_container_width=True)
+    st.dataframe(
+        filtered[["game_name", "player_name", "opponent_name", "wins", "losses"]].rename(columns={
+            "game_name": "Game",
+            "player_name": "Player",
+            "opponent_name": "Opponent",
+            "wins": "Wins",
+            "losses": "Losses"
+        }),
+        hide_index=True,
+        use_container_width=True
+    )
 
     # Optional: Small empty-state hint
     if filtered.empty:
@@ -168,6 +192,14 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.write("Standings Results")
-    st.dataframe(filtered[["opponent_name", "wins", "losses", "game_name"]], hide_index=True)
+    st.dataframe(
+        filtered[["game_name", "opponent_name", "wins", "losses"]].rename(columns={
+            "game_name": "Game",
+            "opponent_name": "Opponent",
+            "wins": "Wins",
+            "losses": "Losses"
+        }),
+        hide_index=True
+    )
 with col2:
     st.altair_chart(chart)
