@@ -153,7 +153,17 @@ with st.container():
     if opponent_filter:
         filtered = filtered[filtered["opponent_name"] == opponent_filter]
 
-    st.dataframe(filtered, use_container_width=True)
+    st.dataframe(
+        filtered[["game_name", "player_name", "opponent_name", "wins", "losses"]].rename(columns={
+            "game_name": "Game",
+            "player_name": "Player",
+            "opponent_name": "Opponent",
+            "wins": "Wins",
+            "losses": "Losses"
+        }),
+        hide_index=True,
+        use_container_width=True
+    )
 
     # Optional: Small empty-state hint
     if filtered.empty:
