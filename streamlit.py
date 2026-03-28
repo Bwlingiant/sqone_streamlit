@@ -77,7 +77,7 @@ for k in ("game_filter", "player_filter", "opponent_filter"):
     st.session_state.setdefault(k, None)
 
 with st.container():
-    gamecol, p1col, p2col = st.columns(3)
+    gamecol, p1col, p2col, resetcol = st.columns([2, 2, 2, 1])
 
     # --- GAME (options narrowed to games the selected player has played in) ---
     with gamecol:
@@ -112,6 +112,16 @@ with st.container():
                    if st.session_state.player_filter in p1_options else None),
             placeholder="Pick Player 1",
         )
+
+    # --- RESET ---
+    with resetcol:
+        st.write("")
+        st.write("")
+        if st.button("Reset", use_container_width=True):
+            st.session_state.game_filter = "All"
+            st.session_state.player_filter = None
+            st.session_state.opponent_filter = None
+            st.rerun()
 
     # --- PLAYER 2 (only after P1) ---
     with p2col:
