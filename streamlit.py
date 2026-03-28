@@ -79,10 +79,15 @@ for k in ("game_filter", "player_filter", "opponent_filter"):
 with st.container():
     gamecol, p1col, p2col = st.columns(3)
 
-    # --- GAME ---
+    # --- GAME (options narrowed to games the selected player has played in) ---
     with gamecol:
-        game_options = ["All"] + sorted(sets_df["game_name"].dropna().unique().tolist())
-        # Ensure game selection is valid
+        prev_player = st.session_state.get("player_filter")
+        if prev_player:
+            df_by_player = sets_df[sets_df["player_name"] == prev_player]
+            game_options = ["All"] + sorted(df_by_player["game_name"].dropna().unique().tolist())
+        else:
+            game_options = ["All"] + sorted(sets_df["game_name"].dropna().unique().tolist())
+
         if st.session_state.game_filter not in game_options:
             st.session_state.game_filter = "All"
         game_filter = st.selectbox("Game Filter", game_options, key="game_filter")
