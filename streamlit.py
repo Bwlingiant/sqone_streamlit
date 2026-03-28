@@ -118,9 +118,8 @@ with st.container():
         st.write("")
         st.write("")
         if st.button("Reset", use_container_width=True):
-            st.session_state.game_filter = "All"
-            st.session_state.player_filter = None
-            st.session_state.opponent_filter = None
+            for k in ("game_filter", "player_filter", "opponent_filter"):
+                st.session_state.pop(k, None)
             st.rerun()
 
     # --- PLAYER 2 (only after P1) ---
